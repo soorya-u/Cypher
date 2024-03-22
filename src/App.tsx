@@ -1,12 +1,24 @@
-import { invoke } from "@tauri-apps/api/tauri";
-import "./App.css";
+import { StrictMode } from 'react'
+import ReactDOM from 'react-dom/client'
+import { RouterProvider, createRouter } from '@tanstack/react-router'
+import "./styles.css";
 
-function App() {
-  async function greet() {
-    return await invoke("greet", { name });
+import { routeTree } from './routeTree.gen'
+
+const router = createRouter({ routeTree })
+
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router
   }
-
-  return <h1 className="text-red-600">Hello World</h1>;
 }
 
-export default App;
+const rootElement = document.getElementById('app')!
+if (!rootElement.innerHTML) {
+  const root = ReactDOM.createRoot(rootElement)
+  root.render(
+    <StrictMode>
+      <RouterProvider router={router} />
+    </StrictMode>,
+  )
+}
