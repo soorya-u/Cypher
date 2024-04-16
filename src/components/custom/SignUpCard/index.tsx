@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 
 export default function SignUpCard() {
   return (
-    <Card className="mx-auto max-w-sm border-none">
+    <Card className="mx-auto max-w-sm border-none shadow-none">
       <CardHeader>
         <CardTitle className="text-xl">Sign Up</CardTitle>
         <CardDescription className="text-[#b4a69e]">
@@ -43,12 +43,12 @@ export default function SignUpCard() {
             </div>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="username">Email</Label>
+            <Label htmlFor="username">Username</Label>
             <Input
               className="border-[#b4a69e] focus-visible:border-none focus-visible:ring-offset-0"
               id="username"
               type="text"
-              placeholder="m@example.com"
+              placeholder="john-doe"
               required
             />
           </div>

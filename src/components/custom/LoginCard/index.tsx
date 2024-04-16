@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 
 export default function LoginCard() {
   return (
-    <Card className="w-full max-w-sm border-none">
+    <Card className="w-full max-w-sm border-none shadow-none">
       <CardHeader className="flex flex-col">
         <CardTitle className="text-2xl">Login</CardTitle>
         <CardDescription className="text-[#b4a69e]">
