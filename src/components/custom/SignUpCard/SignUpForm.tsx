@@ -49,18 +49,16 @@ export default function SignUpForm() {
         )}
       </div>
       <div className="grid gap-2">
-        <Label htmlFor="username">Username</Label>
+        <Label htmlFor="email">Email</Label>
         <Input
           disabled={isSubmitting}
-          {...register("username")}
+          {...register("email")}
           className="border-[#b4a69e] focus-visible:border-none focus-visible:ring-offset-0"
-          placeholder="john-doe"
+          placeholder="johndoe@example.com"
           type="text"
         />
-        {errors.username && (
-          <span className="text-red-500 text-xs">
-            {errors.username.message}
-          </span>
+        {errors.email && (
+          <span className="text-red-500 text-xs">{errors.email.message}</span>
         )}
       </div>
       <div className="grid gap-2">

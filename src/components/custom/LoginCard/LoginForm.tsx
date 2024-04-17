@@ -20,19 +20,16 @@ export default function LoginForm() {
       className="grid gap-4"
     >
       <div className="grid gap-2">
-        <Label htmlFor="username">Username</Label>
+        <Label htmlFor="email">Email</Label>
         <Input
           disabled={isSubmitting}
-          aria-disabled={isSubmitting}
-          {...register("username")}
-          type="text"
-          placeholder="john-doe"
+          {...register("email")}
           className="border-[#b4a69e] focus-visible:border-none focus-visible:ring-offset-0"
+          placeholder="johndoe@example.com"
+          type="text"
         />
-        {errors.username && (
-          <span className="text-red-500 text-xs">
-            {errors.username.message}
-          </span>
+        {errors.email && (
+          <span className="text-red-500 text-xs">{errors.email.message}</span>
         )}
       </div>
       <div className="grid gap-2">
