@@ -24,7 +24,7 @@ export default function LoginCard() {
         <LoginForm />
       </CardContent>
       <CardFooter>
-        <div className="mt-4 mx-auto text-center text-sm">
+        <div className="mx-auto mt-4 text-center text-sm">
           Don&apos;t have an account?{" "}
           <Link
             to="/signup"

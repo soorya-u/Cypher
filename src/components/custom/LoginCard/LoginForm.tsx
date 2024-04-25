@@ -29,7 +29,7 @@ export default function LoginForm() {
           type="text"
         />
         {errors.email && (
-          <span className="text-red-500 text-xs">{errors.email.message}</span>
+          <span className="text-xs text-red-500">{errors.email.message}</span>
         )}
       </div>
       <div className="grid gap-2">
@@ -42,7 +42,7 @@ export default function LoginForm() {
           className="border-[#b4a69e] focus-visible:border-none focus-visible:ring-offset-0"
         />
         {errors.password && (
-          <span className="text-red-500 text-xs">
+          <span className="text-xs text-red-500">
             {errors.password.message}
           </span>
         )}

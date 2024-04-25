@@ -43,7 +43,7 @@ export default function SignUpForm() {
           />
         </div>
         {(errors.firstName || errors.lastName) && (
-          <span className="text-red-500 col-start-1 col-end-3 text-xs">
+          <span className="col-start-1 col-end-3 text-xs text-red-500">
             {errors.firstName?.message ?? errors.lastName?.message}
           </span>
         )}
@@ -58,7 +58,7 @@ export default function SignUpForm() {
           type="text"
         />
         {errors.email && (
-          <span className="text-red-500 text-xs">{errors.email.message}</span>
+          <span className="text-xs text-red-500">{errors.email.message}</span>
         )}
       </div>
       <div className="grid gap-2">
@@ -70,7 +70,7 @@ export default function SignUpForm() {
           type="password"
         />
         {errors.password && (
-          <span className="text-red-500 text-xs">
+          <span className="text-xs text-red-500">
             {errors.password.message}
           </span>
         )}

@@ -6,7 +6,7 @@ const DevTool =
     : lazy(() =>
         import("@tanstack/router-devtools").then((res) => ({
           default: res.TanStackRouterDevtools,
-        }))
+        })),
       );
 
 export default function TanStackRouterDevtools() {

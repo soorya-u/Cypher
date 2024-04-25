@@ -21,5 +21,5 @@ root.render(
     <Providers>
       <RouterProvider router={router} />
     </Providers>
-  </StrictMode>
+  </StrictMode>,
 );
