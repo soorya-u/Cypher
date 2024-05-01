@@ -1,5 +1,10 @@
 @import url("https://fonts.googleapis.com/css2?family=Inder&family=Inter:wght@100..900&display=swap");
 
+@font-face {
+  src: url("./assets/fonts/GlitchInside.otf");
+  font-family: "GlitchInside";
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -73,6 +78,6 @@
     @apply border-border font-['Inter'];
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground h-screen;
   }
 }

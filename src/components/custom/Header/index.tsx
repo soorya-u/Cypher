@@ -1,4 +1,4 @@
-import logo from "@/assets/lock_monochrome.png";
+import logo from "@/assets/image/lock_monochrome.png";
 
 export default function Header() {
   return (
@@ -8,7 +8,7 @@ export default function Header() {
         alt="Logo"
         className="aspect-square h-16 w-16 self-center dark:invert"
       />
-      <h1 className="mb-1 self-end font-serif text-4xl">Cypher</h1>
+      <h1 className="self-end font-['GlitchInside'] text-6xl">Cypher</h1>
     </div>
   );
 }
