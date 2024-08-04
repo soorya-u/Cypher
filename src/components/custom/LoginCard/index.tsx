@@ -27,7 +27,7 @@ export default function LoginCard() {
         <div className="mx-auto mt-4 text-center text-sm text-secondary">
           Don&apos;t have an account?{" "}
           <Link
-            to="/signup"
+            to="/sign-up"
             className="text-secondary underline underline-offset-2 outline-none transition-all duration-500 hover:text-primary"
           >
             Sign up

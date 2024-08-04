@@ -84,7 +84,7 @@ export default function SignUpForm() {
           </span>
         )}
       </div>
-      <Button disabled={isSubmitting} type="submit" className="w-full">
+      <Button disabled={isSubmitting} type="submit" className="w-full text-black">
         Create an account
       </Button>
     </form>

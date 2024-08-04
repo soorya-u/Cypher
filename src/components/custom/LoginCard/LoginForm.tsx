@@ -52,7 +52,7 @@ export default function LoginForm() {
           </span>
         )}
       </div>
-      <Button className="w-full bg-primary">Sign in</Button>
+      <Button className="w-full bg-primary text-black">Sign in</Button>
     </form>
   );
 }
