@@ -29,7 +29,9 @@ export function IndependentThemeToggler() {
   return (
     <Link
       onClick={handleClick}
-      className={cn("absolute -top-2 -right-7 flex items-center justify-start gap-2 py-2")}
+      className={cn(
+        "absolute -right-7 -top-2 flex items-center justify-start gap-2 py-2",
+      )}
     >
       {theme === "dark" ? (
         <IconMoon className="h-5 w-5 flex-shrink-0 [&_path]:!text-neutral-700 dark:[&_path]:!text-neutral-200" />
