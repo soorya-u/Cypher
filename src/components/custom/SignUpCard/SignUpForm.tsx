@@ -23,21 +23,25 @@ export default function SignUpForm() {
     >
       <div className="grid grid-cols-2 gap-x-4 gap-y-2">
         <div className="grid gap-2">
-          <Label htmlFor="firstName">First name</Label>
+          <Label className="text-secondary" htmlFor="firstName">
+            First name
+          </Label>
           <Input
             disabled={isSubmitting}
             {...register("firstName")}
-            className="border-[#b4a69e] focus-visible:border-none focus-visible:ring-offset-0"
+            className="border-secondary focus:text-primary focus-visible:border-none focus-visible:text-primary focus-visible:ring-offset-0"
             placeholder="John"
             type="text"
           />
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="lastName">Last name</Label>
+          <Label className="text-secondary" htmlFor="lastName">
+            Last name
+          </Label>
           <Input
             disabled={isSubmitting}
             {...register("lastName")}
-            className="border-[#b4a69e] focus-visible:border-none focus-visible:ring-offset-0"
+            className="border-secondary focus:text-primary focus-visible:border-none focus-visible:text-primary focus-visible:ring-offset-0"
             placeholder="Doe"
             type="text"
           />
@@ -49,11 +53,13 @@ export default function SignUpForm() {
         )}
       </div>
       <div className="grid gap-2">
-        <Label htmlFor="email">Email</Label>
+        <Label className="text-secondary" htmlFor="email">
+          Email
+        </Label>
         <Input
           disabled={isSubmitting}
           {...register("email")}
-          className="border-[#b4a69e] focus-visible:border-none focus-visible:ring-offset-0"
+          className="border-secondary focus:text-primary focus-visible:border-none focus-visible:text-primary focus-visible:ring-offset-0"
           placeholder="johndoe@example.com"
           type="text"
         />
@@ -62,11 +68,13 @@ export default function SignUpForm() {
         )}
       </div>
       <div className="grid gap-2">
-        <Label htmlFor="password">Password</Label>
+        <Label className="text-secondary" htmlFor="password">
+          Password
+        </Label>
         <Input
           disabled={isSubmitting}
           {...register("password")}
-          className="border-[#b4a69e] focus-visible:border-none focus-visible:ring-offset-0"
+          className="border-secondary focus:text-primary focus-visible:border-none focus-visible:text-primary focus-visible:ring-offset-0"
           type="password"
         />
         {errors.password && (
