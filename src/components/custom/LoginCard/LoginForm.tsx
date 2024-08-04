@@ -20,11 +20,13 @@ export default function LoginForm() {
       className="grid gap-4"
     >
       <div className="grid gap-2">
-        <Label htmlFor="email">Email</Label>
+        <Label className="text-secondary" htmlFor="email">
+          Email
+        </Label>
         <Input
           disabled={isSubmitting}
           {...register("email")}
-          className="border-[#b4a69e] focus-visible:border-none focus-visible:ring-offset-0"
+          className="border-secondary focus:text-primary focus-visible:border-none focus-visible:text-primary focus-visible:ring-offset-0"
           placeholder="johndoe@example.com"
           type="text"
         />
@@ -33,13 +35,15 @@ export default function LoginForm() {
         )}
       </div>
       <div className="grid gap-2">
-        <Label htmlFor="password">Password</Label>
+        <Label className="text-secondary" htmlFor="password">
+          Password
+        </Label>
         <Input
           disabled={isSubmitting}
           aria-disabled={isSubmitting}
           {...register("password")}
           type="password"
-          className="border-[#b4a69e] focus-visible:border-none focus-visible:ring-offset-0"
+          className="border-secondary focus:text-primary focus-visible:border-none focus-visible:text-primary focus-visible:ring-offset-0"
         />
         {errors.password && (
           <span className="text-xs text-red-500">
