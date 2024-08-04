@@ -6,7 +6,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/primitives/card";
+} from "@/components/ui/card";
 
 import SignUpForm from "./SignUpForm";
 

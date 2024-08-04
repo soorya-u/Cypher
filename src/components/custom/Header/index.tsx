@@ -1,8 +1,10 @@
+import { IndependentThemeToggler } from "@/components/custom/ThemeToggler";
 import logo from "@/assets/image/lock_monochrome.png";
 
 export default function Header() {
   return (
-    <div className="flex items-center justify-center gap-x-3">
+    <div className="relative flex items-center justify-center gap-x-3">
+      <IndependentThemeToggler />
       <img
         src={logo}
         alt="Logo"
