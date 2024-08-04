@@ -76,6 +76,7 @@ export default function SignUpForm() {
           {...register("password")}
           className="border-secondary focus:text-primary focus-visible:border-none focus-visible:text-primary focus-visible:ring-offset-0"
           type="password"
+          placeholder="********"
         />
         {errors.password && (
           <span className="text-xs text-red-500">

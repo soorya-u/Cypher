@@ -43,6 +43,7 @@ export default function LoginForm() {
           aria-disabled={isSubmitting}
           {...register("password")}
           type="password"
+          placeholder="********"
           className="border-secondary focus:text-primary focus-visible:border-none focus-visible:text-primary focus-visible:ring-offset-0"
         />
         {errors.password && (
