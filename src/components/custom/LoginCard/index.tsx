@@ -7,7 +7,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/primitives/card";
+} from "@/components/ui/card";
 
 import LoginForm from "./LoginForm";
 
