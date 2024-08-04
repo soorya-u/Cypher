@@ -19,7 +19,7 @@
   },
   "productName": "cypher",
   "version": "0.0.0",
-  "identifier": "dev.sooryau.cypher",
+  "identifier": "dev.soorya-u.cypher",
   "plugins": {},
   "app": {
     "security": {
