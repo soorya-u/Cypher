@@ -9,7 +9,7 @@ export const Route = createFileRoute("/login")({
 
 function LogIn() {
   return (
-    <div className="flex w-full h-full flex-col items-center justify-center gap-y-4">
+    <div className="flex h-full w-full flex-col items-center justify-center gap-y-4 bg-neutral-100 dark:bg-neutral-800">
       <Header />
       <LoginCard />
     </div>
