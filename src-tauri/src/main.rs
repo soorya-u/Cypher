@@ -6,5 +6,5 @@ mod cryptography;
 mod database;
 
 fn main() {
-    cypher_lib::run()
+    cypher_app_lib::run()
 }

@@ -18,8 +18,9 @@ import {
 
 import { cn } from "@/utils/cn";
 
-import logo from "@/assets/image/lock_monochrome.png";
 import { ThemeToggler } from "../ThemeToggler";
+
+import logo from "@/assets/image/logo-thick.png";
 
 export function Sidebar({ children }: PropsWithChildren) {
   const [open, setOpen] = useState(false);
@@ -27,7 +28,7 @@ export function Sidebar({ children }: PropsWithChildren) {
   return (
     <div
       className={cn(
-        "flex w-full flex-1 flex-col overflow-hidden rounded-md border border-neutral-200 bg-gray-100 md:flex-row dark:border-neutral-700 dark:bg-neutral-800",
+        "flex w-full flex-1 flex-col overflow-hidden rounded-md border border-neutral-200 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800 md:flex-row",
         "h-screen",
       )}
     >
@@ -77,13 +78,13 @@ export const Logo = ({ isOpen }: { isOpen: boolean }) => {
       <img
         src={logo}
         alt="Logo"
-        className="aspect-square size-7 self-center dark:invert"
+        className="aspect-square size-7 self-center"
       />
       {isOpen && (
         <motion.span
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="font-Iceberg text-primary whitespace-pre text-xl font-bold tracking-widest"
+          className="whitespace-pre font-Iceberg text-xl font-bold tracking-widest text-primary"
         >
           Cypher
         </motion.span>

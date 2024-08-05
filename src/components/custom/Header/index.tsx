@@ -1,5 +1,5 @@
 import { IndependentThemeToggler } from "@/components/custom/ThemeToggler";
-import logo from "@/assets/image/lock_monochrome.png";
+import logo from "@/assets/image/logo-thick.png";
 
 export default function Header() {
   return (
@@ -8,7 +8,7 @@ export default function Header() {
       <img
         src={logo}
         alt="Logo"
-        className="aspect-square h-16 w-16 self-center dark:invert"
+        className="aspect-square h-16 w-16 self-center"
       />
       <h1 className="font-Iceberg self-end text-6xl font-bold text-primary">
         Cypher
