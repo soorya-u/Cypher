@@ -1,3 +1,9 @@
+mod auth;
+mod cryptography;
+mod database;
+
+use database::db_init;
+
 #[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
@@ -7,7 +13,7 @@ fn greet(name: &str) -> String {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![greet, db_init])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
