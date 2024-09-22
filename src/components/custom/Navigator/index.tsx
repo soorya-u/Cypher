@@ -46,11 +46,11 @@ export function Sidebar({ children }: PropsWithChildren) {
           <div>
             <SidebarLink
               link={{
-                label: "Manu Arora",
+                label: "Soorya U",
                 href: "#",
                 icon: (
                   <img
-                    src="https://assets.aceternity.com/manu.png"
+                    src="https://www.soorya-u.dev/apple-touch-icon.png"
                     className="h-7 w-7 flex-shrink-0 rounded-full"
                     alt="Avatar"
                   />
@@ -75,11 +75,7 @@ export const Logo = ({ isOpen }: { isOpen: boolean }) => {
       href="/"
       className="relative z-20 mt-2 flex items-center space-x-2 py-1 text-sm font-normal text-black"
     >
-      <img
-        src={logo}
-        alt="Logo"
-        className="aspect-square size-7 self-center"
-      />
+      <img src={logo} alt="Logo" className="aspect-square size-7 self-center" />
       {isOpen && (
         <motion.span
           initial={{ opacity: 0 }}
