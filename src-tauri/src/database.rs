@@ -1,6 +1,7 @@
 use std::result::Result;
 use sqlx::{migrate::MigrateDatabase, Sqlite};
 
+#[allow(dead_code)]
 #[tauri::command]
 pub async fn db_init() -> Result<String,String> {
     let db_url = String::from("sqlite://sqlite.db");

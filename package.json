@@ -20,6 +20,7 @@
     "@tanstack/router-devtools": "^1.22.0",
     "@tauri-apps/api": "^2.0.0-rc.0",
     "@tauri-apps/plugin-shell": "^2.0.0-rc.0",
+    "caniuse-lite": "^1.0.30001663",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "framer-motion": "^11.3.21",
