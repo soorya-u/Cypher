@@ -1,9 +1,10 @@
 mod auth;
+mod callable;
 mod cryptography;
 mod database;
-mod callable;
 
-use database::db_init;
+use database::initialize_database;
+use tauri::async_runtime::spawn;
 
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -14,10 +15,12 @@ fn greet(name: &str) -> String {
 pub fn run() {
     tauri::Builder::default()
         .on_page_load(|_, _| {
-            println!("page loaded nicely");
+            spawn(async move {
+                initialize_database().await;
+            });
         })
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![greet, db_init])
+        .invoke_handler(tauri::generate_handler![greet])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
