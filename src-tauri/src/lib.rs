@@ -14,9 +14,13 @@ fn greet(name: &str) -> String {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
-        .on_page_load(|_, _| {
+        .on_page_load(|webview, _| {
+            let w = webview.clone();
             spawn(async move {
-                initialize_database().await;
+                match initialize_database().await {
+                    Err(_) => w.close().unwrap(),
+                    Ok(_) => println!("Init Successfull"),
+                };
             });
         })
         .plugin(tauri_plugin_shell::init())
