@@ -1,5 +1,5 @@
 mod auth;
-mod callable;
+mod invokable;
 mod cryptography;
 mod database;
 
@@ -18,8 +18,8 @@ pub fn run() {
             let w = webview.clone();
             spawn(async move {
                 match initialize_database().await {
+                    Ok(_) => {},
                     Err(_) => w.close().unwrap(),
-                    Ok(_) => println!("Init Successfull"),
                 };
             });
         })
