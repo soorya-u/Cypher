@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-
+import { invoke } from "@tauri-apps/api/core";
 export const Route = createFileRoute("/")({
   component: Index,
 });
@@ -7,7 +7,14 @@ export const Route = createFileRoute("/")({
 function Index() {
   return (
     <div className="p-2">
-      <h3>Welcome Home!</h3>
+      <button
+        onClick={async () => {
+          const a = await invoke("db_init");
+          console.log({ a });
+        }}
+      >
+        Init DB
+      </button>
     </div>
   );
 }

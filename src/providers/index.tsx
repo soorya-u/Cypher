@@ -1,13 +1,10 @@
-import { ThemeProvider } from "./ThemeProvider";
+import { ThemeProvider } from "./Theme";
+import RouterProvider from "./Router";
 
-type ProvidersProps = {
-  children: React.ReactNode;
-};
-
-export default function Providers({ children }: ProvidersProps) {
+export default function Providers() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      {children}
+      <RouterProvider />
     </ThemeProvider>
   );
 }

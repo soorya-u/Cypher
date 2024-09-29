@@ -12,7 +12,7 @@ const DevTool =
 export default function TanStackRouterDevtools() {
   return (
     <Suspense>
-      <DevTool />
+      <DevTool position="bottom-right" />
     </Suspense>
   );
 }
