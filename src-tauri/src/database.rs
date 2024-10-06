@@ -5,7 +5,7 @@ use queries::CREATE_SCHEMA_QUERY;
 use sqlx::{migrate::MigrateDatabase, Sqlite, SqlitePool};
 use std::{fs, result::Result};
 
-pub async fn initialize_database() -> Result<String, String> {
+pub async fn initialize_database() -> Result<(), String> {
     let db_file = String::from("root.db");
 
     let proj_dirs = ProjectDirs::from("dev", "soorya-u", "cypher")
@@ -38,7 +38,7 @@ pub async fn initialize_database() -> Result<String, String> {
             .expect("Unable to run query");
         pool.close().await;
 
-        return Ok(String::from("Schema Creation Successfull"));
+        return Ok(());
     }
-    Ok(String::from("Database exists"))
+    Ok(())
 }

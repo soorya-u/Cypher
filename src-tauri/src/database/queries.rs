@@ -33,3 +33,9 @@ pub const CREATE_SCHEMA_QUERY: &str = "
     FOREIGN KEY (account_id) REFERENCES accounts(id)
   );
 ";
+
+pub const INSERT_INTO_USERS: &str = "
+INSERT INTO users (email, full_name, hashed_password, unique_key) VALUES (
+  
+);
+";
