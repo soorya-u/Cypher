@@ -1,4 +1,4 @@
-pub const CREATE_SCHEMA_QUERY: &str = "
+pub const CREATE_SCHEMA_QUERY: &str = r#"
   
   PRAGMA foreign_keys = ON;
   
@@ -7,6 +7,7 @@ pub const CREATE_SCHEMA_QUERY: &str = "
     full_name          TEXT      NOT NULL,
     hashed_password    TEXT      NOT NULL,
     unique_key         TEXT      NOT NULL UNIQUE,
+    hash_salt          TEXT      NOT NULL UNIQUE,
     created_at         DATETIME  DEFAULT (datetime('now')),
     updated_at         DATETIME  DEFAULT (datetime('now')),
     is_remotely_synced BOOLEAN   DEFAULT 0 NOT NULL
@@ -32,4 +33,8 @@ pub const CREATE_SCHEMA_QUERY: &str = "
     account_id TEXT,
     FOREIGN KEY (account_id) REFERENCES accounts(id)
   );
-";
+"#;
+
+pub const INSERT_INTO_USERS: &str = r#"
+INSERT INTO users (email,  full_name,  hashed_password,  unique_key, hash_salt) VALUES ( $1, $2, $3, $4, $5 );
+"#;
