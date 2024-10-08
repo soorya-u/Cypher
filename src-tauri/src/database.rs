@@ -1,44 +1,54 @@
+mod path;
 mod queries;
+mod users;
 
-use directories::ProjectDirs;
+use path::database_path;
 use queries::CREATE_SCHEMA_QUERY;
-use sqlx::{migrate::MigrateDatabase, Sqlite, SqlitePool};
-use std::{fs, result::Result};
+use sqlx::{migrate::MigrateDatabase, Pool, Sqlite, SqlitePool};
+use std::result::Result;
+use tauri::async_runtime;
 
-pub async fn initialize_database() -> Result<(), String> {
-    let db_file = String::from("root.db");
+pub struct Database {
+    pool: Pool<Sqlite>,
+    db_url: String,
+}
 
-    let proj_dirs = ProjectDirs::from("dev", "soorya-u", "cypher")
-        .ok_or_else(|| String::from("Failed to get project directories"))?;
-
-    let database_path = proj_dirs.data_local_dir().join(&db_file);
-    let parent_dir = database_path
-        .parent()
-        .ok_or_else(|| String::from("Failed to get parent directory"))?;
-    if !parent_dir.exists() {
-        fs::create_dir_all(parent_dir)
-            .map_err(|_| String::from("Failed to create database directory"))?;
+impl Database {
+    async fn database_exists(&self) -> bool {
+        !Sqlite::database_exists(&self.db_url).await.unwrap_or(false)
     }
 
-    let database_directory = database_path
-        .to_str()
-        .ok_or_else(|| String::from("Failed to convert database path to string"))?;
+    pub async fn new() -> Result<Self, String> {
+        let db_url = database_path()?;
 
-    let db_url = String::from(database_directory);
-    println!("Database URL: {}", db_url.as_str());
-
-    if !Sqlite::database_exists(&db_url).await.unwrap_or(false) {
-        Sqlite::create_database(&db_url).await.unwrap();
         let pool = SqlitePool::connect(&db_url)
             .await
             .expect("Unable to create pool");
-        sqlx::query(CREATE_SCHEMA_QUERY)
-            .execute(&pool)
-            .await
-            .expect("Unable to run query");
-        pool.close().await;
 
-        return Ok(());
+        return Ok(Database { pool, db_url });
     }
-    Ok(())
+
+    pub async fn initialize_database(&self) -> Result<(), String> {
+        if self.database_exists().await {
+            return Ok(());
+        }
+
+        Sqlite::create_database(&self.db_url)
+            .await
+            .map_err(|e| format!("Failed to create database: {}", e))?;
+
+        sqlx::query(CREATE_SCHEMA_QUERY)
+            .execute(&self.pool)
+            .await
+            .map_err(|e| format!("Failed to run schema query: {}", e))?;
+        Ok(())
+    }
+}
+
+impl Drop for Database {
+    fn drop(&mut self) {
+        async_runtime::block_on(async {
+            self.pool.close().await;
+        });
+    }
 }

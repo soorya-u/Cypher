@@ -3,25 +3,26 @@ mod database;
 mod invokable;
 mod validator;
 
-use database::initialize_database;
-use invokable::{login, sign_up};
-use tauri::async_runtime::spawn;
-
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
+use database::Database;
+use invokable::{greet, login, sign_up};
+use tauri::async_runtime;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .on_page_load(|webview, _| {
             let w = webview.clone();
-            spawn(async move {
-                match initialize_database().await {
-                    Ok(_) => {}
-                    Err(_) => w.close().unwrap(),
-                };
+            async_runtime::spawn(async move {
+                if let Err(e) = async {
+                    let db = Database::new().await?;
+                    db.initialize_database().await?;
+                    Ok::<(), String>(())
+                }
+                .await
+                {
+                    println!("Error initializing database: {}", e);
+                    w.close().unwrap();
+                }
             });
         })
         .plugin(tauri_plugin_shell::init())

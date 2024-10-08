@@ -35,7 +35,5 @@ pub const CREATE_SCHEMA_QUERY: &str = "
 ";
 
 pub const INSERT_INTO_USERS: &str = "
-INSERT INTO users (email, full_name, hashed_password, unique_key) VALUES (
-  
-);
+INSERT INTO users (email,  full_name,  hashed_password,  unique_key) VALUES ( $1, $2, $3, $4 );
 ";
