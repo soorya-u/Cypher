@@ -13,15 +13,9 @@ pub fn run() {
         .on_page_load(|webview, _| {
             let w = webview.clone();
             async_runtime::spawn(async move {
-                if let Err(e) = async {
-                    let db = Database::new().await?;
-                    db.initialize_database().await?;
-                    Ok::<(), String>(())
-                }
-                .await
-                {
-                    println!("Error initializing database: {}", e);
-                    w.close().unwrap();
+                match Database::new().await {
+                    Ok(_) => {}
+                    Err(_) => w.close().unwrap(),
                 }
             });
         })

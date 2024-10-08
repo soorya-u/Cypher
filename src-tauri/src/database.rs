@@ -10,38 +10,32 @@ use tauri::async_runtime;
 
 pub struct Database {
     pool: Pool<Sqlite>,
-    db_url: String,
 }
 
 impl Database {
-    async fn database_exists(&self) -> bool {
-        !Sqlite::database_exists(&self.db_url).await.unwrap_or(false)
+    async fn database_exists(db_url: &str) -> bool {
+        !Sqlite::database_exists(db_url).await.unwrap_or(false)
     }
 
     pub async fn new() -> Result<Self, String> {
         let db_url = database_path()?;
 
+        if !Database::database_exists(&db_url).await {
+            Sqlite::create_database(&db_url)
+                .await
+                .map_err(|e| format!("Failed to create database: {}", e))?;
+        }
+
         let pool = SqlitePool::connect(&db_url)
             .await
             .expect("Unable to create pool");
 
-        return Ok(Database { pool, db_url });
-    }
-
-    pub async fn initialize_database(&self) -> Result<(), String> {
-        if self.database_exists().await {
-            return Ok(());
-        }
-
-        Sqlite::create_database(&self.db_url)
-            .await
-            .map_err(|e| format!("Failed to create database: {}", e))?;
-
         sqlx::query(CREATE_SCHEMA_QUERY)
-            .execute(&self.pool)
+            .execute(&pool)
             .await
             .map_err(|e| format!("Failed to run schema query: {}", e))?;
-        Ok(())
+
+        Ok(Database { pool })
     }
 }
 
