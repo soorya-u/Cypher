@@ -1,4 +1,4 @@
-use crate::validator;
+use crate::{validator, cryptography::encryption::Encryption};
 
 // validate -> generate key -> hash password -> Store DB -> Store creds
 
@@ -8,9 +8,10 @@ pub async fn sign_up(full_name: String, email: String, password: String) -> Resu
         return Err(String::from("Invalid Email or Password"));
     }
 
-    // generate key
+    let unique_key =  Encryption::generate_unique_key();
 
     // hash password
+    
 
     Ok(())
 }

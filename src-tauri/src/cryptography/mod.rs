@@ -1,2 +1,2 @@
-mod encryption;
-mod hashing;
+pub mod encryption;
+pub mod hashing;
