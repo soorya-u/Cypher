@@ -14,7 +14,7 @@ pub struct Database {
 
 impl Database {
     async fn database_exists(db_url: &str) -> bool {
-        !Sqlite::database_exists(db_url).await.unwrap_or(false)
+        Sqlite::database_exists(db_url).await.unwrap_or(false)
     }
 
     pub async fn new() -> Result<Self, String> {
@@ -41,8 +41,9 @@ impl Database {
 
 impl Drop for Database {
     fn drop(&mut self) {
-        async_runtime::block_on(async {
-            self.pool.close().await;
+        let pool = self.pool.clone();
+        async_runtime::spawn(async move {
+            pool.close().await;
         });
     }
 }
