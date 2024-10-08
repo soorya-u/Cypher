@@ -4,7 +4,10 @@ mod invokable;
 mod validator;
 
 use database::Database;
-use invokable::{greet, login, sign_up};
+use invokable::{
+    auth::{login, sign_up},
+    greet,
+};
 use tauri::async_runtime;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
