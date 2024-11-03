@@ -5,7 +5,7 @@ mod validator;
 
 use database::Database;
 use invokable::{
-    auth::{login, sign_up},
+    auth::{get_session, login, logout, sign_up},
     greet,
 };
 use tauri::async_runtime;
@@ -23,7 +23,13 @@ pub fn run() {
             });
         })
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![greet, login, sign_up])
+        .invoke_handler(tauri::generate_handler![
+            greet,
+            login,
+            sign_up,
+            get_session,
+            logout
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

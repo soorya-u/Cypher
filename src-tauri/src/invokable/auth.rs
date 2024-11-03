@@ -1,5 +1,5 @@
 use crate::{
-    cryptography::{encryption::Encryption, hashing::Hashing},
+    cryptography::{encryption::Encryption, hashing::Hashing, jwt::JWT, vault::Vault},
     validator,
 };
 
@@ -17,7 +17,12 @@ pub async fn sign_up(full_name: String, email: String, password: String) -> Resu
     let salt = hasher.get_salt();
     let hashed_password = hasher.hash_data(&password);
 
-     // Store creds
+    // Store creds to DB
+
+    let jwt_token = JWT::create_jwt(&unique_key, &email)?;
+
+    let mut vault = Vault::new()?;
+    vault.store_session(jwt_token)?;
 
     Ok(())
 }
@@ -25,7 +30,7 @@ pub async fn sign_up(full_name: String, email: String, password: String) -> Resu
 // validate -> Fetch DB -> Compare hash -> Store creds
 
 #[tauri::command]
-pub async fn login(email: String, password: String) -> Result<bool, String> {
+pub async fn login(email: String, password: String) -> Result<(), String> {
     if !validator::validate_email(&email) || !validator::validate_password(&password) {
         return Err(format!("Invalid Email or Password"));
     }
@@ -39,7 +44,30 @@ pub async fn login(email: String, password: String) -> Result<bool, String> {
         return Err(format!("Password did not match"));
     }
 
-    // Store creds
+    let jwt_token = JWT::create_jwt(&hash, &email)?;
 
-    Ok(true)
+    let mut vault = Vault::new()?;
+    vault.store_session(jwt_token)?;
+
+    Ok(())
+}
+
+#[tauri::command]
+// Change Return Type to User
+pub async fn get_session() -> Result<(), String> {
+    let mut vault = Vault::new()?;
+    let token = vault.get_session()?;
+
+    // Handle JWT Expiration
+    let email = JWT::read_jwt(&token)?;
+
+    // Read User Type from DB
+
+    Ok(())
+}
+
+#[tauri::command]
+pub fn logout() -> Result<(), String> {
+    let mut vault = Vault::new()?;
+    vault.clear_session()
 }
