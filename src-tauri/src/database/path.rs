@@ -17,11 +17,11 @@ pub fn database_path() -> Result<String, String> {
             .map_err(|_| String::from("Failed to create database directory"))?;
     }
 
-    let database_directory = database_path
+    let database_path_str = database_path
         .to_str()
         .ok_or_else(|| String::from("Failed to convert database path to string"))?;
 
-    let db_url = String::from(database_directory);
+    let db_url = String::from(database_path_str);
 
     return Ok(db_url);
 }
