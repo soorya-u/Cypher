@@ -15,8 +15,8 @@ impl JWT {
         let expiration = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .expect("Time went backwards")
-            .as_secs()
-            + 60 * 60 * 24 * 15; // 1/2 month expiration
+            .as_millis()
+            + 1000 * 60 * 60 * 24 * 15; // 1/2 month expiration
 
         let claims = Claims {
             sub: String::from(email),
@@ -37,5 +37,24 @@ impl JWT {
         let token_data =
             decode::<Claims>(token, &decoding_key, &validation).expect("Unable to read JWT");
         Ok(token_data.claims.sub)
+    }
+
+    pub fn is_jwt_expired(token: &str) -> Result<bool, String> {
+        let decoding_key = DecodingKey::from_secret(&[]); // Empty secret key
+        let validation = Validation::default();
+
+        let token_data =
+            decode::<Claims>(token, &decoding_key, &validation).expect("Unable to read JWT");
+
+        if SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_millis()
+            < token_data.claims.exp as u128
+        {
+            return Ok(true);
+        } else {
+            return Ok(false);
+        }
     }
 }

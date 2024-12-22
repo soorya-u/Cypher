@@ -2,6 +2,8 @@ use directories::ProjectDirs;
 use kv::{Config, Store};
 use std::fs::{self, File};
 
+use crate::invokable::ErrorPayload;
+
 pub struct Vault {
     store: Store,
 }
@@ -32,7 +34,7 @@ impl Vault {
         return Ok(Vault { store });
     }
 
-    pub fn store_session(&mut self, token: String) -> Result<(), String> {
+    pub fn store_session(self, token: String) -> Result<(), String> {
         let secret_bucket = self
             .store
             .bucket::<String, String>(Some("secrets"))
@@ -47,7 +49,7 @@ impl Vault {
         Ok(())
     }
 
-    pub fn get_session(&mut self) -> Result<String, String> {
+    pub fn get_session(self) -> Result<String, String> {
         let secret_bucket = self
             .store
             .bucket::<String, String>(Some("secrets"))
@@ -55,15 +57,14 @@ impl Vault {
 
         let key = String::from("token");
 
-        let token = secret_bucket
-            .get(&key)
-            .expect("Unable to find Secrets")
-            .unwrap();
-
-        Ok(token)
+        // TODO: Handle Differently with ErrorPayload as return value
+        match secret_bucket.get(&key).expect("Unable to find Secrets") {
+            Some(token) => Ok(token),
+            None => Ok(String::from("")),
+        }
     }
 
-    pub fn clear_session(&mut self) -> Result<(), String> {
+    pub fn clear_session(self) -> Result<(), String> {
         let secret_bucket = self
             .store
             .bucket::<String, String>(Some("secrets"))
