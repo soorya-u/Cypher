@@ -5,16 +5,16 @@ import React, { useState, createContext, useContext } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { IconMenu2, IconX } from "@tabler/icons-react";
 
-type Links = {
+export type Links = {
   label: string;
   icon: React.JSX.Element | React.ReactNode;
   href: string;
 };
 
-type Clickable = {
+export type Clickable = {
   label: string;
   icon: React.JSX.Element | React.ReactNode;
-  handleClick: () => void;
+  handleClick: () => void | Promise<void>;
 };
 
 interface SidebarContextProps {
@@ -95,7 +95,7 @@ export const DesktopSidebar = ({
     <>
       <motion.div
         className={cn(
-          "hidden h-full w-[300px] flex-shrink-0  bg-neutral-100 px-4 py-4 md:flex md:flex-col dark:bg-neutral-800",
+          "hidden h-full w-[300px] flex-shrink-0  bg-neutral-100 px-4 py-4 dark:bg-neutral-800 md:flex md:flex-col",
           className,
         )}
         animate={{
@@ -121,7 +121,7 @@ export const MobileSidebar = ({
     <>
       <div
         className={cn(
-          "flex h-10 w-full flex-row items-center justify-between  bg-neutral-100 px-4 py-4 md:hidden dark:bg-neutral-800",
+          "flex h-10 w-full flex-row items-center justify-between  bg-neutral-100 px-4 py-4 dark:bg-neutral-800 md:hidden",
         )}
         {...props}
       >
@@ -221,7 +221,7 @@ export const SidebarClickable = ({
           display: animate ? (open ? "inline-block" : "none") : "inline-block",
           opacity: animate ? (open ? 1 : 0) : 1,
         }}
-        className="!m-0 inline-block whitespace-pre !p-0 text-sm !text-neutral-700 transition duration-150 group-hover/sidebar:translate-x-1 dark:!text-neutral-200"
+        className="!m-0 inline-block whitespace-pre !p-0 text-sm capitalize !text-neutral-700 transition duration-150 group-hover/sidebar:translate-x-1 dark:!text-neutral-200"
       >
         {link.label}
       </motion.span>

@@ -1,6 +1,6 @@
 mod path;
 mod queries;
-mod users;
+pub mod users;
 
 use path::database_path;
 use queries::schema::CREATE_SCHEMA_QUERY;

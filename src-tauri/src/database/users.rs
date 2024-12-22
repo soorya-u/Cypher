@@ -3,7 +3,8 @@ use super::{
     Database,
 };
 
-#[derive(Debug)]
+#[derive(Debug, Default, sqlx::FromRow, serde::Serialize, serde::Deserialize)]
+#[sqlx(default)]
 pub struct User {
     pub full_name: String,
     pub email: String,
@@ -45,9 +46,15 @@ impl User {
         Ok(())
     }
 
-    pub async fn from_email(email: &str) -> Result<(), String> {
+    pub async fn from_email(email: &str) -> Result<Self, String> {
         let db = Database::new().await?;
 
-        return Ok(());
+        let res: User = sqlx::query_as(FETCH_USERS_BY_EMAIL)
+            .bind(email)
+            .fetch_one(&db.pool)
+            .await
+            .expect("Unable to fetch users from DB");
+
+        return Ok(res);
     }
 }
