@@ -1,11 +1,9 @@
 use directories::ProjectDirs;
-use std::{
-    fs::{self, File},
-    io::{Read, Write},
-};
+use kv::{Config, Store};
+use std::fs::{self, File};
 
 pub struct Vault {
-    secrets: File,
+    store: Store,
 }
 
 impl Vault {
@@ -25,31 +23,58 @@ impl Vault {
         }
 
         if !parent_dir.exists() {
-            let secrets =
-                File::create(secrets_path.clone()).expect("Unable to create secrets file");
-            return Ok(Vault { secrets });
-        } else {
-            let secrets = File::open(secrets_path.clone()).expect("Unable to Open secrets");
-            return Ok(Vault { secrets });
+            File::create(secrets_path.clone()).expect("Unable to create secrets file");
         }
+
+        let cnf = Config::new(secrets_path);
+        let store = Store::new(cnf).expect("Unable to Create Store");
+
+        return Ok(Vault { store });
     }
 
     pub fn store_session(&mut self, token: String) -> Result<(), String> {
-        self.secrets
-            .write(token.as_bytes())
+        let secret_bucket = self
+            .store
+            .bucket::<String, String>(Some("secrets"))
+            .expect("Unable to create Bucket");
+
+        let key = String::from("token");
+
+        secret_bucket
+            .set(&key, &token)
             .expect("Unable to Write to Secrets");
+
         Ok(())
     }
 
     pub fn get_session(&mut self) -> Result<String, String> {
-        let mut token = String::new();
-        self.secrets
-            .read_to_string(&mut token)
-            .expect("Unable to read secrets");
+        let secret_bucket = self
+            .store
+            .bucket::<String, String>(Some("secrets"))
+            .expect("Unable to create Bucket");
+
+        let key = String::from("token");
+
+        let token = secret_bucket
+            .get(&key)
+            .expect("Unable to find Secrets")
+            .unwrap();
+
         Ok(token)
     }
 
     pub fn clear_session(&mut self) -> Result<(), String> {
-        self.store_session(String::from(""))
+        let secret_bucket = self
+            .store
+            .bucket::<String, String>(Some("secrets"))
+            .expect("Unable to create Bucket");
+
+        let key = String::from("token");
+
+        secret_bucket
+            .remove(&key)
+            .expect("Unable to remove Secrets");
+
+        Ok(())
     }
 }
