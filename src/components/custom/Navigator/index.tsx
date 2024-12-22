@@ -1,6 +1,7 @@
 import { PropsWithChildren, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "@tanstack/react-router";
+import { invoke } from "@tauri-apps/api/core";
 
 import {
   IconHome2,
@@ -14,6 +15,9 @@ import {
   Sidebar as SidebarUI,
   SidebarBody,
   SidebarLink,
+  SidebarClickable,
+  Links,
+  Clickable,
 } from "@/components/ui/sidebar";
 
 import { cn } from "@/utils/cn";
@@ -37,9 +41,13 @@ export function Sidebar({ children }: PropsWithChildren) {
           <div className="flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
             <Logo isOpen={open} />
             <div className="mt-8 flex flex-col gap-2">
-              {links.map((link, idx) => (
-                <SidebarLink key={idx} link={link} />
-              ))}
+              {links.map((link, idx) => {
+                return link.type === "link" ? (
+                  <SidebarLink key={idx} link={link} />
+                ) : (
+                  <SidebarClickable key={idx} link={link} />
+                );
+              })}
               <ThemeToggler />
             </div>
           </div>
@@ -89,8 +97,12 @@ export const Logo = ({ isOpen }: { isOpen: boolean }) => {
   );
 };
 
-const links = [
+const links: (
+  | (Links & { type: "link" })
+  | (Clickable & { type: "clickable" })
+)[] = [
   {
+    type: "link",
     label: "Dashboard",
     href: "/",
     icon: (
@@ -98,6 +110,7 @@ const links = [
     ),
   },
   {
+    type: "link",
     label: "Profile",
     href: "/",
     icon: (
@@ -105,6 +118,7 @@ const links = [
     ),
   },
   {
+    type: "link",
     label: "Settings",
     href: "/",
     icon: (
@@ -112,13 +126,18 @@ const links = [
     ),
   },
   {
+    type: "clickable",
     label: "Logout",
-    href: "/",
+    handleClick: async () => {
+      const a = await invoke("logout");
+      console.log({ a });
+    },
     icon: (
       <IconLogin className="h-5 w-5 flex-shrink-0 text-neutral-700 dark:text-neutral-200" />
     ),
   },
   {
+    type: "link",
     label: "Login",
     href: "/login",
     icon: (

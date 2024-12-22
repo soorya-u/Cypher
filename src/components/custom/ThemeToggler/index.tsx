@@ -17,7 +17,7 @@ export function ThemeToggler() {
           ) : (
             <IconSun className="h-5 w-5 flex-shrink-0 [&_path]:!text-neutral-700 dark:[&_path]:!text-neutral-200" />
           ),
-        label: "Mode",
+        label: `${theme} mode`,
       }}
     />
   );
