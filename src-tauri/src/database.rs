@@ -3,7 +3,7 @@ mod queries;
 mod users;
 
 use path::database_path;
-use queries::CREATE_SCHEMA_QUERY;
+use queries::schema::CREATE_SCHEMA_QUERY;
 use sqlx::{migrate::MigrateDatabase, Pool, Sqlite, SqlitePool};
 use std::result::Result;
 use tauri::async_runtime;
