@@ -2,6 +2,7 @@ use aes_gcm::{
     aead::{generic_array::GenericArray, Aead, OsRng},
     AeadCore, Aes128Gcm, Key, KeyInit, Nonce,
 };
+use base64::{engine::general_purpose, Engine};
 use typenum;
 
 pub struct Encryption {
@@ -12,12 +13,12 @@ pub struct Encryption {
 impl Encryption {
     pub fn generate_unique_key() -> String {
         let key = Aes128Gcm::generate_key(&mut OsRng).as_slice().to_vec();
-        String::from_utf8(key).unwrap()
+        general_purpose::STANDARD.encode(key)
     }
 
     pub fn generate_nonce() -> String {
         let nonce = Aes128Gcm::generate_nonce(&mut OsRng).as_slice().to_vec();
-        String::from_utf8(nonce).unwrap()
+        general_purpose::STANDARD.encode(nonce)
     }
 
     pub fn new(key: &str, nonce: &str) -> Self {
@@ -31,7 +32,7 @@ impl Encryption {
         let data = data.as_bytes();
         let cipher = Aes128Gcm::new(&self.unique_key);
         match cipher.encrypt(&self.nonce, data) {
-            Ok(c) => Ok(String::from_utf8(c).unwrap()),
+            Ok(c) => Ok(general_purpose::STANDARD.encode(c)),
             Err(e) => Err(format!("Error in encryption: {:?}", e)),
         }
     }
@@ -40,7 +41,7 @@ impl Encryption {
         let data = data.as_bytes();
         let cipher = Aes128Gcm::new(&self.unique_key);
         match cipher.decrypt(&self.nonce, data) {
-            Ok(c) => Ok(String::from_utf8(c).unwrap()),
+            Ok(c) => Ok(general_purpose::STANDARD.encode(c)),
             Err(e) => Err(format!("Error in encryption: {:?}", e)),
         }
     }

@@ -12,7 +12,18 @@ struct Claims {
 pub struct JWT {}
 
 impl JWT {
-    pub fn create_jwt(secret: &str, email: &str) -> Result<String, ErrorPayload> {
+    fn get_secret() -> Result<String, ErrorPayload> {
+        let secret = std::env::var("JWT_SECRET").map_err(ErrorPayload::from_error_with_closure(
+            ErrorType::Internal,
+            "",
+            ErrorAction::None,
+            "Unable to get Environment variable",
+        ))?;
+
+        Ok(secret)
+    }
+
+    pub fn create_jwt(email: &str) -> Result<String, ErrorPayload> {
         let expiration = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .map_err(ErrorPayload::from_error_with_closure(
@@ -29,36 +40,28 @@ impl JWT {
             exp: expiration as usize,
         };
 
+        let secret: String = JWT::get_secret()?;
+
         let header = Header::default();
-        let token = encode(&header, &claims, &EncodingKey::from_secret(secret.as_ref())).map_err(
-            ErrorPayload::from_error_with_closure(
-                ErrorType::Internal,
-                "",
-                ErrorAction::None,
-                "Failed to create token",
-            ),
-        )?;
+        let token = encode(
+            &header,
+            &claims,
+            &EncodingKey::from_secret(secret.as_bytes()),
+        )
+        .map_err(ErrorPayload::from_error_with_closure(
+            ErrorType::Internal,
+            "",
+            ErrorAction::None,
+            "Failed to create token",
+        ))?;
 
         Ok(token)
     }
 
-    pub fn read_jwt(token: &str) -> Result<String, ErrorPayload> {
-        let decoding_key = DecodingKey::from_secret(&[]); // Empty secret key
-        let validation = Validation::default();
+    pub fn decode_jwt(token: &str) -> Result<String, ErrorPayload> {
+        let secret: String = JWT::get_secret()?;
 
-        let token_data = decode::<Claims>(token, &decoding_key, &validation).map_err(
-            ErrorPayload::from_error_with_closure(
-                ErrorType::User,
-                "Unable to verify your Session! Please Login again.",
-                ErrorAction::Redirect,
-                "Unable to read JWT",
-            ),
-        )?;
-        Ok(token_data.claims.sub)
-    }
-
-    pub fn is_jwt_expired(token: &str) -> Result<bool, ErrorPayload> {
-        let decoding_key = DecodingKey::from_secret(&[]); // Empty secret key
+        let decoding_key = DecodingKey::from_secret(secret.as_bytes());
         let validation = Validation::default();
 
         let token_data = decode::<Claims>(token, &decoding_key, &validation).map_err(
@@ -74,11 +77,16 @@ impl JWT {
             .duration_since(UNIX_EPOCH)
             .unwrap()
             .as_millis()
-            < token_data.claims.exp as u128
+            > token_data.claims.exp as u128
         {
-            return Ok(true);
-        } else {
-            return Ok(false);
+            return Err(ErrorPayload {
+                details: "Jwt has been Expired".to_string(),
+                error: "".to_string(),
+                error_type: ErrorType::Expected,
+                action_type: ErrorAction::Redirect,
+                message: "Your session has been expired! Please Login Again".to_string(),
+            });
         }
+        Ok(token_data.claims.sub)
     }
 }

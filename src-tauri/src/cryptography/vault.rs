@@ -1,6 +1,6 @@
 use directories::ProjectDirs;
 use kv::{Config, Store};
-use std::fs::{self, File};
+use std::fs;
 
 use crate::invokable::{ErrorAction, ErrorPayload, ErrorType};
 
@@ -11,7 +11,7 @@ pub struct Vault {
 
 impl Vault {
     pub fn new() -> Result<Vault, ErrorPayload> {
-        let secrets_file = String::from("session.secrets");
+        let secrets_file = "session";
 
         let proj_dirs = ProjectDirs::from("dev", "soorya-u", "cypher")
             .ok_or_else(|| String::from("Failed to get project directories"))
@@ -21,7 +21,7 @@ impl Vault {
                 ErrorAction::None,
             ))?;
 
-        let secrets_path = proj_dirs.data_local_dir().join(&secrets_file);
+        let secrets_path = proj_dirs.data_local_dir().join(secrets_file);
         let parent_dir = secrets_path
             .parent()
             .ok_or_else(|| String::from("Failed to get parent directory"))
@@ -36,15 +36,6 @@ impl Vault {
                 "",
                 ErrorAction::None,
                 "Failed to create database directory",
-            ))?;
-        }
-
-        if !parent_dir.exists() {
-            File::create(secrets_path.clone()).map_err(ErrorPayload::from_error_with_closure(
-                ErrorType::Internal,
-                "",
-                ErrorAction::None,
-                "Unable to create secrets file",
             ))?;
         }
 

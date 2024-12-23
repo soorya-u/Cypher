@@ -4,11 +4,14 @@ mod invokable;
 mod validator;
 
 use database::Database;
+use dotenv::dotenv;
 use invokable::auth::{get_session, login, logout, sign_up};
 use tauri::async_runtime;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    dotenv().ok();
+
     tauri::Builder::default()
         .on_page_load(|webview, _| {
             let w = webview.clone();
