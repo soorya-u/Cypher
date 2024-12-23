@@ -1,26 +1,14 @@
-import { useForm } from "react-hook-form";
-import { signUpSchema, type SignUpType } from "@/schema/signup";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useSignUp } from "@/hooks/use-signup";
 
 import { Button } from "@/components/ui/button";
-
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export default function SignUpForm() {
-  const {
-    handleSubmit,
-    register,
-    formState: { errors, isSubmitting },
-  } = useForm<SignUpType>({
-    resolver: zodResolver(signUpSchema),
-  });
+  const { handleSubmit, register, errors, isSubmitting } = useSignUp();
 
   return (
-    <form
-      className="grid gap-4"
-      onSubmit={handleSubmit((val) => console.log(val))}
-    >
+    <form className="grid gap-4" onSubmit={handleSubmit}>
       <div className="grid grid-cols-2 gap-x-4 gap-y-2">
         <div className="grid gap-2">
           <Label className="text-secondary" htmlFor="firstName">
@@ -84,7 +72,11 @@ export default function SignUpForm() {
           </span>
         )}
       </div>
-      <Button disabled={isSubmitting} type="submit" className="w-full text-black">
+      <Button
+        disabled={isSubmitting}
+        type="submit"
+        className="w-full text-black"
+      >
         Create an account
       </Button>
     </form>

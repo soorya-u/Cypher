@@ -24,6 +24,12 @@ pub struct ErrorPayload {
     pub action_type: ErrorAction,
 }
 
+#[derive(serde::Serialize, serde::Deserialize)]
+pub struct IpcUser {
+    pub full_name: String,
+    pub email: String,
+}
+
 impl ErrorPayload {
     pub fn from_message_with_closure(
         error_type: ErrorType,

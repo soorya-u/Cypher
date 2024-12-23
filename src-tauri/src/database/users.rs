@@ -2,9 +2,9 @@ use super::{
     queries::user::{FETCH_USERS_BY_EMAIL, INSERT_INTO_USERS},
     Database,
 };
-use crate::invokable::{ErrorAction, ErrorPayload, ErrorType};
+use crate::invokable::{ErrorAction, ErrorPayload, ErrorType, IpcUser};
 
-#[derive(Debug, Default, sqlx::FromRow, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Default, sqlx::FromRow)]
 #[sqlx(default)]
 pub struct User {
     pub full_name: String,
@@ -31,7 +31,7 @@ impl User {
         };
     }
 
-    pub async fn insert_user_to_db(self) -> Result<(), ErrorPayload> {
+    pub async fn insert_user_to_db(&self) -> Result<(), ErrorPayload> {
         let db = Database::new().await?;
 
         sqlx::query(INSERT_INTO_USERS)
@@ -67,5 +67,12 @@ impl User {
             ))?;
 
         return Ok(res);
+    }
+
+    pub fn to_ipc_user(self) -> IpcUser {
+        IpcUser {
+            full_name: self.full_name,
+            email: self.email,
+        }
     }
 }

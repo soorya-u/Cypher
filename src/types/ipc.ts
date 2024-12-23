@@ -3,18 +3,30 @@ export enum IpcErrorActionType {
   Redirect,
 }
 
-export enum ErrorType {
+export enum IpcErrorType {
   Expected,
   User,
   Internal,
 }
 
-export type ErrorPayload = {
-  error_type: ErrorType;
-  message: String;
-  error: String;
-  details: String;
+export type IpcErrorPayload = {
+  error_type: IpcErrorType;
+  message: string;
+  error: string;
+  details: string;
   action_type: IpcErrorActionType;
 };
 
-export type IPCUserType = {};
+export type IpcLoginType = {
+  email: string;
+  password: string;
+};
+
+export type IpcSignUpType = {
+  fullName: string;
+} & IpcLoginType;
+
+export type IpcUserType = {
+  full_name: string;
+  email: string;
+};
