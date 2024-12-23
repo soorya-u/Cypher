@@ -1,14 +1,24 @@
 use crate::{
     cryptography::{encryption::Encryption, hashing::Hashing, jwt::JWT, vault::Vault},
     database::users::User,
-    invokable::ErrorPayload,
+    invokable::{ErrorAction, ErrorPayload, ErrorType},
     validator,
 };
 
 #[tauri::command]
-pub async fn sign_up(full_name: String, email: String, password: String) -> Result<(), String> {
+pub async fn sign_up(
+    full_name: String,
+    email: String,
+    password: String,
+) -> Result<(), ErrorPayload> {
     if !validator::validate_email(&email) || !validator::validate_password(&password) {
-        return Err(format!("Invalid Email or Password"));
+        return Err(ErrorPayload {
+            action_type: ErrorAction::Redirect,
+            details: "regex did not match".to_string(),
+            error: "".to_string(),
+            error_type: ErrorType::User,
+            message: "Email or Password does not match pattern.".to_string(),
+        });
     }
 
     let unique_key = Encryption::generate_unique_key();
@@ -30,9 +40,15 @@ pub async fn sign_up(full_name: String, email: String, password: String) -> Resu
 }
 
 #[tauri::command]
-pub async fn login(email: String, password: String) -> Result<User, String> {
+pub async fn login(email: String, password: String) -> Result<User, ErrorPayload> {
     if !validator::validate_email(&email) || !validator::validate_password(&password) {
-        return Err(format!("Invalid Email or Password"));
+        return Err(ErrorPayload {
+            action_type: ErrorAction::Redirect,
+            details: "regex did not match".to_string(),
+            error: "".to_string(),
+            error_type: ErrorType::User,
+            message: "Email or Password does not match pattern.".to_string(),
+        });
     }
 
     let user = User::from_email(&email).await?;
@@ -43,7 +59,13 @@ pub async fn login(email: String, password: String) -> Result<User, String> {
 
     let hasher = Hashing::from(salt);
     if !hasher.verify_hash(&password, hash) {
-        return Err(format!("Password did not match"));
+        return Err(ErrorPayload {
+            action_type: ErrorAction::Redirect,
+            details: "regex did not match".to_string(),
+            error: "".to_string(),
+            error_type: ErrorType::User,
+            message: "Email or Password is incorrect!".to_string(),
+        });
     }
 
     let jwt_token = JWT::create_jwt(secret, &email)?;
@@ -55,12 +77,18 @@ pub async fn login(email: String, password: String) -> Result<User, String> {
 }
 
 #[tauri::command]
-pub async fn get_session() -> Result<User, String> {
+pub async fn get_session() -> Result<User, ErrorPayload> {
     let vault: Vault = Vault::new()?;
     let token = vault.get_session()?;
 
     if JWT::is_jwt_expired(&token)? {
-        return Err(format!("Jwt has been Expired"));
+        return Err(ErrorPayload {
+            details: "Jwt has been Expired".to_string(),
+            error: "".to_string(),
+            error_type: ErrorType::Expected,
+            action_type: ErrorAction::Redirect,
+            message: "Your session has been expired! Please Login Again".to_string(),
+        });
     }
 
     let email = JWT::read_jwt(&token)?;
@@ -71,6 +99,6 @@ pub async fn get_session() -> Result<User, String> {
 
 #[tauri::command]
 pub fn logout() -> Result<(), ErrorPayload> {
-    let vault: Vault = Vault::new().map_err(ErrorPayload::from_message_with_closure(""))?;
-    vault.clear_session().map_err(ErrorPayload::from_message_with_closure(""))
+    let vault: Vault = Vault::new()?;
+    vault.clear_session()
 }
