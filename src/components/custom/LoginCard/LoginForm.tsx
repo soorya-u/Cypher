@@ -1,24 +1,13 @@
-import { useForm } from "react-hook-form";
-import { loginSchema, type LoginType } from "@/schema/login";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useLogin } from "@/hooks/use-login";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
 export default function LoginForm() {
-  const {
-    handleSubmit,
-    register,
-    formState: { errors, isSubmitting },
-  } = useForm<LoginType>({
-    resolver: zodResolver(loginSchema),
-  });
+  const { handleSubmit, register, errors, isSubmitting } = useLogin();
   return (
-    <form
-      onSubmit={handleSubmit((val) => console.log(val))}
-      className="grid gap-4"
-    >
+    <form onSubmit={handleSubmit} className="grid gap-4">
       <div className="grid gap-2">
         <Label className="text-secondary" htmlFor="email">
           Email
