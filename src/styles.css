@@ -89,7 +89,7 @@
 
 @layer base {
   * {
-    @apply font-Exo border-border;
+    @apply border-border font-Exo;
   }
   body {
     @apply h-screen bg-white text-secondary dark:bg-neutral-900;
@@ -102,4 +102,9 @@
 
 .active svg path {
   color: #3bed97;
+}
+
+div#app {
+  width: 100%;
+  height: 100%;
 }

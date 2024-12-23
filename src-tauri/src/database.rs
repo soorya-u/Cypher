@@ -8,6 +8,8 @@ use sqlx::{migrate::MigrateDatabase, Pool, Sqlite, SqlitePool};
 use std::result::Result;
 use tauri::async_runtime;
 
+use crate::invokable::{ErrorAction, ErrorPayload, ErrorType};
+
 pub struct Database {
     pool: Pool<Sqlite>,
 }
@@ -17,23 +19,43 @@ impl Database {
         Sqlite::database_exists(db_url).await.unwrap_or(false)
     }
 
-    pub async fn new() -> Result<Self, String> {
-        let db_url = database_path()?;
+    pub async fn new() -> Result<Self, ErrorPayload> {
+        let db_url = database_path().map_err(ErrorPayload::from_message_with_closure(
+            ErrorType::Internal,
+            "",
+            ErrorAction::None,
+        ))?;
 
         if !Database::database_exists(&db_url).await {
-            Sqlite::create_database(&db_url)
-                .await
-                .map_err(|e| format!("Failed to create database: {}", e))?;
+            Sqlite::create_database(&db_url).await.map_err(
+                ErrorPayload::from_error_with_closure(
+                    ErrorType::Internal,
+                    "",
+                    ErrorAction::None,
+                    "Failed to create database",
+                ),
+            )?;
         }
 
-        let pool = SqlitePool::connect(&db_url)
-            .await
-            .expect("Unable to create pool");
+        let pool =
+            SqlitePool::connect(&db_url)
+                .await
+                .map_err(ErrorPayload::from_error_with_closure(
+                    ErrorType::Internal,
+                    "",
+                    ErrorAction::None,
+                    "Unable to create pool",
+                ))?;
 
         sqlx::query(CREATE_SCHEMA_QUERY)
             .execute(&pool)
             .await
-            .map_err(|e| format!("Failed to run schema query: {}", e))?;
+            .map_err(ErrorPayload::from_error_with_closure(
+                ErrorType::Internal,
+                "",
+                ErrorAction::None,
+                "Failed to run schema query",
+            ))?;
 
         Ok(Database { pool })
     }
