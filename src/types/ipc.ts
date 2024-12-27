@@ -30,3 +30,10 @@ export type IpcUserType = {
   full_name: string;
   email: string;
 };
+
+export enum InvokableFunctions {
+  SignUp = "sign_up",
+  Login = "login",
+  GetSession = "get_session",
+  Logout = "logout",
+}
