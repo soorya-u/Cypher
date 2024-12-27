@@ -13,9 +13,9 @@ export function ThemeToggler() {
         handleClick,
         icon:
           theme === "dark" ? (
-            <IconMoon className="h-5 w-5 flex-shrink-0 [&_path]:!text-neutral-700 dark:[&_path]:!text-neutral-200" />
+            <IconMoon className="h-5 w-5 flex-shrink-0" />
           ) : (
-            <IconSun className="h-5 w-5 flex-shrink-0 [&_path]:!text-neutral-700 dark:[&_path]:!text-neutral-200" />
+            <IconSun className="h-5 w-5 flex-shrink-0" />
           ),
         label: `${theme} mode`,
       }}

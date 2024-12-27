@@ -1,15 +1,8 @@
 import { PropsWithChildren, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "@tanstack/react-router";
-import { invoke } from "@tauri-apps/api/core";
 
-import {
-  IconHome2,
-  IconUser,
-  IconSettings,
-  IconLogout,
-  IconLogin,
-} from "@tabler/icons-react";
+import { IconHome2, IconSettings, IconLogout } from "@tabler/icons-react";
 
 import {
   Sidebar as SidebarUI,
@@ -25,9 +18,11 @@ import { cn } from "@/utils/cn";
 import { ThemeToggler } from "../ThemeToggler";
 
 import logo from "@/assets/image/logo-thick.png";
+import { useLogout } from "@/hooks/use-auth";
 
 export function Sidebar({ children }: PropsWithChildren) {
   const [open, setOpen] = useState(false);
+  const logout = useLogout();
 
   return (
     <div
@@ -42,6 +37,8 @@ export function Sidebar({ children }: PropsWithChildren) {
             <Logo isOpen={open} />
             <div className="mt-8 flex flex-col gap-2">
               {links.map((link, idx) => {
+                if (link.type === "clickable" && link.label === "Logout")
+                  link.handleClick = logout;
                 return link.type === "link" ? (
                   <SidebarLink key={idx} link={link} />
                 ) : (
@@ -111,14 +108,6 @@ const links: (
   },
   {
     type: "link",
-    label: "Profile",
-    href: "/",
-    icon: (
-      <IconUser className="h-5 w-5 flex-shrink-0 text-neutral-700 dark:text-neutral-200" />
-    ),
-  },
-  {
-    type: "link",
     label: "Settings",
     href: "/",
     icon: (
@@ -128,18 +117,7 @@ const links: (
   {
     type: "clickable",
     label: "Logout",
-    handleClick: async () => {
-      const a = await invoke("logout");
-      console.log({ a });
-    },
-    icon: (
-      <IconLogin className="h-5 w-5 flex-shrink-0 text-neutral-700 dark:text-neutral-200" />
-    ),
-  },
-  {
-    type: "link",
-    label: "Login",
-    href: "/login",
+    handleClick: async () => {},
     icon: (
       <IconLogout className="h-5 w-5 flex-shrink-0 text-neutral-700 dark:text-neutral-200" />
     ),

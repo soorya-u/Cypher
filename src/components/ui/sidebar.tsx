@@ -187,7 +187,7 @@ export const SidebarLink = ({
           display: animate ? (open ? "inline-block" : "none") : "inline-block",
           opacity: animate ? (open ? 1 : 0) : 1,
         }}
-        className="!m-0 inline-block whitespace-pre !p-0 text-sm transition duration-150 group-hover/sidebar:translate-x-1 "
+        className="!m-0 inline-block whitespace-pre !p-0 text-sm transition duration-150 group-hover/sidebar:translate-x-1"
       >
         {link.label}
       </motion.span>
@@ -221,7 +221,7 @@ export const SidebarClickable = ({
           display: animate ? (open ? "inline-block" : "none") : "inline-block",
           opacity: animate ? (open ? 1 : 0) : 1,
         }}
-        className="!m-0 inline-block whitespace-pre !p-0 text-sm capitalize !text-neutral-700 transition duration-150 group-hover/sidebar:translate-x-1 dark:!text-neutral-200"
+        className="!m-0 inline-block whitespace-pre !p-0 text-sm capitalize transition duration-150 group-hover/sidebar:translate-x-1"
       >
         {link.label}
       </motion.span>
