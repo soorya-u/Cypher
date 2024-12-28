@@ -18,11 +18,12 @@ import { cn } from "@/utils/cn";
 import { ThemeToggler } from "../ThemeToggler";
 
 import logo from "@/assets/image/logo-thick.png";
-import { useLogout } from "@/hooks/use-auth";
+import { useAuth, useLogout } from "@/hooks/use-auth";
 
 export function Sidebar({ children }: PropsWithChildren) {
   const [open, setOpen] = useState(false);
   const logout = useLogout();
+  const { name } = useAuth();
 
   return (
     <div
@@ -51,7 +52,7 @@ export function Sidebar({ children }: PropsWithChildren) {
           <div>
             <SidebarLink
               link={{
-                label: "Soorya U",
+                label: name,
                 href: "#",
                 icon: (
                   <img

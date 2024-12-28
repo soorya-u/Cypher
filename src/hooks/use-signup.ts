@@ -40,13 +40,19 @@ export const useSignUp = () => {
       toast({
         title: "Failed to Login!",
         description: err?.message || "Something went wrong",
+        variant: "destructive",
       });
     });
     if (!user)
       return toast({
         title: "Something went wrong!",
         description: "Unable to get User",
+        variant: "destructive",
       });
+    toast({
+      title: "Sign Up Successfull!",
+      description: "Your account has been successfully Created!",
+    });
     setSession(user);
     navigate({ to: "/", startTransition: true, replace: true });
   };

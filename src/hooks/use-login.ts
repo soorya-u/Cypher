@@ -27,6 +27,7 @@ export const useLogin = () => {
         toast({
           title: "Failed to Login!",
           description: err?.message || "Something went wrong",
+          variant: "destructive",
         });
       },
     );
@@ -34,7 +35,13 @@ export const useLogin = () => {
       return toast({
         title: "Something went wrong!",
         description: "Unable to get User",
+        variant: "destructive",
       });
+
+    toast({
+      title: "Login Successfull!",
+      description: "You have been successfully Logged in!",
+    });
     setSession(user);
     navigate({ to: "/", startTransition: true, replace: true });
   };
