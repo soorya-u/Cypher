@@ -26,6 +26,13 @@ pub const CREATE_SCHEMA_QUERY: &str = r#"
     FOREIGN KEY (unique_key) REFERENCES users(unique_key)
   );
 
+  CREATE TABLE IF NOT EXISTS recovery_phases (
+    account_id TEXT,
+    phase TEXT,
+    PRIMARY KEY(account_id, phase)
+    FOREIGN KEY (account_id) REFERENCES accounts(id)
+  );
+
   CREATE TABLE IF NOT EXISTS extra_details (
     field      TEXT NOT NULL,
     value      TEXT NOT NULL,
