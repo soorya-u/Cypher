@@ -2,20 +2,20 @@ use std::error::Error;
 
 pub mod auth;
 
-#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(serde::Serialize, serde::Deserialize, specta::Type, Clone)]
 pub enum ErrorAction {
     None,
     Redirect,
 }
 
-#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(serde::Serialize, serde::Deserialize, specta::Type, Clone)]
 pub enum ErrorType {
     Expected,
     User,
     Internal,
 }
 
-#[derive(serde::Serialize, serde::Deserialize)]
+#[taurpc::ipc_type]
 pub struct ErrorPayload {
     pub error_type: ErrorType,
     pub message: String,
@@ -24,7 +24,7 @@ pub struct ErrorPayload {
     pub action_type: ErrorAction,
 }
 
-#[derive(serde::Serialize, serde::Deserialize)]
+#[taurpc::ipc_type]
 pub struct IpcUser {
     pub full_name: String,
     pub email: String,

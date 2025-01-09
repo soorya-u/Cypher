@@ -6,89 +6,106 @@ use crate::{
 
 use super::{ErrorAction, ErrorPayload, ErrorType, IpcUser};
 
-#[tauri::command]
-pub async fn sign_up(
-    full_name: String,
-    email: String,
-    password: String,
-) -> Result<IpcUser, ErrorPayload> {
-    if !validator::validate_email(&email) || !validator::validate_password(&password) {
-        return Err(ErrorPayload {
-            action_type: ErrorAction::Redirect,
-            details: "regex did not match".to_string(),
-            error: "".to_string(),
-            error_type: ErrorType::User,
-            message: "Email or Password does not match pattern.".to_string(),
-        });
-    }
-
-    let unique_key = Encryption::generate_unique_key();
-
-    let hasher = Hashing::new();
-    let salt = hasher.get_salt();
-    let hashed_password = hasher.hash_data(&password);
-
-    let user = User::new(&full_name, &email, &hashed_password, &unique_key, &salt);
-
-    user.insert_user_to_db().await?;
-
-    let jwt_token = JWT::create_jwt(&email)?;
-
-    let vault = Vault::new()?;
-    vault.store_session(jwt_token)?;
-
-    Ok(user.to_ipc_user())
+#[taurpc::procedures(path = "auth", export_to = "../src/types/taurpc.ts")]
+pub trait AuthProcedure {
+    #[taurpc(alias = "signUp")]
+    async fn sign_up(
+        full_name: String,
+        email: String,
+        password: String,
+    ) -> Result<IpcUser, ErrorPayload>;
+    async fn login(email: String, password: String) -> Result<IpcUser, ErrorPayload>;
+    #[taurpc(alias = "getSession")]
+    async fn get_session() -> Result<IpcUser, ErrorPayload>;
+    async fn logout() -> Result<(), ErrorPayload>;
 }
 
-#[tauri::command]
-pub async fn login(email: String, password: String) -> Result<IpcUser, ErrorPayload> {
-    if !validator::validate_email(&email) || !validator::validate_password(&password) {
-        return Err(ErrorPayload {
-            action_type: ErrorAction::Redirect,
-            details: "regex did not match".to_string(),
-            error: "".to_string(),
-            error_type: ErrorType::User,
-            message: "Email or Password does not match pattern.".to_string(),
-        });
+#[derive(Clone)]
+pub struct AuthResolver;
+
+#[taurpc::resolvers]
+impl AuthProcedure for AuthResolver {
+    async fn sign_up(
+        self,
+        full_name: String,
+        email: String,
+        password: String,
+    ) -> Result<IpcUser, ErrorPayload> {
+        if !validator::validate_email(&email) || !validator::validate_password(&password) {
+            return Err(ErrorPayload {
+                action_type: ErrorAction::Redirect,
+                details: "regex did not match".to_string(),
+                error: "".to_string(),
+                error_type: ErrorType::User,
+                message: "Email or Password does not match pattern.".to_string(),
+            });
+        }
+
+        let unique_key = Encryption::generate_unique_key();
+
+        let hasher = Hashing::new();
+        let salt = hasher.get_salt();
+        let hashed_password = hasher.hash_data(&password);
+
+        let user = User::new(&full_name, &email, &hashed_password, &unique_key, &salt);
+
+        user.insert_user_to_db().await?;
+
+        let jwt_token = JWT::create_jwt(&email)?;
+
+        let vault = Vault::new()?;
+        vault.store_session(jwt_token)?;
+
+        Ok(user.to_ipc_user())
     }
 
-    let user = User::from_email(&email).await?;
+    async fn login(self, email: String, password: String) -> Result<IpcUser, ErrorPayload> {
+        if !validator::validate_email(&email) || !validator::validate_password(&password) {
+            return Err(ErrorPayload {
+                action_type: ErrorAction::Redirect,
+                details: "regex did not match".to_string(),
+                error: "".to_string(),
+                error_type: ErrorType::User,
+                message: "Email or Password does not match pattern.".to_string(),
+            });
+        }
 
-    let salt = &user.hash_salt;
-    let hash = &user.hashed_password;
+        let user = User::from_email(&email).await?;
 
-    let hasher = Hashing::from(salt);
-    if !hasher.verify_hash(&password, hash) {
-        return Err(ErrorPayload {
-            action_type: ErrorAction::Redirect,
-            details: "regex did not match".to_string(),
-            error: "".to_string(),
-            error_type: ErrorType::User,
-            message: "Email or Password is incorrect!".to_string(),
-        });
+        let salt = &user.hash_salt;
+        let hash = &user.hashed_password;
+
+        let hasher = Hashing::from(salt);
+        if !hasher.verify_hash(&password, hash) {
+            return Err(ErrorPayload {
+                action_type: ErrorAction::Redirect,
+                details: "regex did not match".to_string(),
+                error: "".to_string(),
+                error_type: ErrorType::User,
+                message: "Email or Password is incorrect!".to_string(),
+            });
+        }
+
+        let jwt_token = JWT::create_jwt(&email)?;
+
+        let vault = Vault::new()?;
+        vault.store_session(jwt_token)?;
+
+        Ok(user.to_ipc_user())
     }
 
-    let jwt_token = JWT::create_jwt(&email)?;
+    async fn get_session(self) -> Result<IpcUser, ErrorPayload> {
+        let vault: Vault = Vault::new()?;
+        let token = vault.get_session()?;
 
-    let vault = Vault::new()?;
-    vault.store_session(jwt_token)?;
+        let email = JWT::decode_jwt(&token)?;
+        let user = User::from_email(&email).await?;
 
-    Ok(user.to_ipc_user())
-}
+        Ok(user.to_ipc_user())
+    }
 
-#[tauri::command]
-pub async fn get_session() -> Result<IpcUser, ErrorPayload> {
-    let vault: Vault = Vault::new()?;
-    let token = vault.get_session()?;
-
-    let email = JWT::decode_jwt(&token)?;
-    let user = User::from_email(&email).await?;
-
-    Ok(user.to_ipc_user())
-}
-
-#[tauri::command]
-pub fn logout() -> Result<(), ErrorPayload> {
-    let vault: Vault = Vault::new()?;
-    vault.clear_session()
+    async fn logout(self) -> Result<(), ErrorPayload> {
+        let vault: Vault = Vault::new()?;
+        vault.clear_session()
+    }
 }
