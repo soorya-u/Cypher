@@ -1,9 +1,8 @@
 import { useEffect } from "react";
 import { create } from "zustand";
 import { useNavigate } from "@tanstack/react-router";
-import { invoke } from "@tauri-apps/api/core";
 
-import { IpcUserType, IpcErrorPayload, InvokableFunctions } from "@/types/ipc";
+import { createTauRPCProxy, ErrorPayload, IpcUser } from "@/types/taurpc";
 
 type AuthState = {
   email: string;
@@ -11,7 +10,7 @@ type AuthState = {
 };
 
 type AuthActions = {
-  setSession: (cred: IpcUserType) => void;
+  setSession: (cred: IpcUser) => void;
   clearSession: () => void;
 };
 
@@ -28,9 +27,12 @@ export const useSession = () => {
   const { setSession, email, name } = useAuth();
   useEffect(() => {
     if (!email || !name)
-      invoke<IpcUserType>(InvokableFunctions.GetSession)
-        .then((u) => setSession(u))
-        .catch((_: IpcErrorPayload) => navigate({ to: "/login" }));
+      createTauRPCProxy().then((t) =>
+        t.auth
+          .getSession()
+          .then((u) => setSession(u))
+          .catch((_: ErrorPayload) => navigate({ to: "/login" })),
+      );
   }, []);
 };
 
@@ -38,7 +40,8 @@ export const useLogout = () => {
   const navigate = useNavigate();
   const { clearSession } = useAuth();
   const logout = async () => {
-    await invoke(InvokableFunctions.Logout).then(() => {
+    const taurpc = await createTauRPCProxy();
+    await taurpc.auth.logout().then(() => {
       clearSession();
       navigate({ to: "/login", replace: true, startTransition: true });
     });

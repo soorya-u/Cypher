@@ -1,12 +1,11 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { invoke } from "@tauri-apps/api/core";
 import { useNavigate } from "@tanstack/react-router";
 
 import { useAuth } from "@/hooks/use-auth";
 import { loginSchema, LoginType } from "@/schema/login";
-import { IpcUserType, InvokableFunctions, IpcErrorPayload } from "@/types/ipc";
 import { useToast } from "./use-toast";
+import { createTauRPCProxy, ErrorPayload } from "@/types/taurpc";
 
 export const useLogin = () => {
   const { setSession } = useAuth();
@@ -21,16 +20,17 @@ export const useLogin = () => {
   });
 
   const onSubmit = async (val: LoginType) => {
-    const user = await invoke<IpcUserType>(InvokableFunctions.Login, val).catch(
-      (err: IpcErrorPayload) => {
+    const taurpc = await createTauRPCProxy();
+    const user = await taurpc.auth
+      .login(val.email, val.password)
+      .catch((err: ErrorPayload) => {
         console.log({ failed: err.details, error: err.error });
         toast({
           title: "Failed to Login!",
           description: err?.message || "Something went wrong",
           variant: "destructive",
         });
-      },
-    );
+      });
     if (!user)
       return toast({
         title: "Something went wrong!",

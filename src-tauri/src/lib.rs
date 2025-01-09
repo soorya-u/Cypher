@@ -5,12 +5,15 @@ mod validator;
 
 use database::Database;
 use dotenv::dotenv;
-use invokable::auth::{get_session, login, logout, sign_up};
+use invokable::auth::{AuthProcedure, AuthResolver};
 use tauri::async_runtime;
+use taurpc::Router;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
-pub fn run() {
+pub async fn run() {
     dotenv().ok();
+
+    let router = Router::new().merge(AuthResolver.into_handler());
 
     tauri::Builder::default()
         .on_page_load(|webview, _| {
@@ -23,12 +26,7 @@ pub fn run() {
             });
         })
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![
-            login,
-            sign_up,
-            get_session,
-            logout
-        ])
+        .invoke_handler(router.into_handler())
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
