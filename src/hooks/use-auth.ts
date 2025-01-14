@@ -26,13 +26,13 @@ export const useSession = () => {
   const navigate = useNavigate();
   const { setSession, email, name } = useAuth();
   useEffect(() => {
-    if (!email || !name)
-      createTauRPCProxy().then((t) =>
-        t.auth
-          .getSession()
-          .then((u) => setSession(u))
-          .catch((_: ErrorPayload) => navigate({ to: "/login" })),
-      );
+    if (!email || !name) {
+      const taurpc = createTauRPCProxy();
+      taurpc.auth
+        .getSession()
+        .then((u) => setSession(u))
+        .catch((_: ErrorPayload) => navigate({ to: "/login" }));
+    }
   }, []);
 };
 
